@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>4x4 Magic Matrix Game</title>
+  <link rel="stylesheet" href="style.css">
+  <link  href="script.js">
+  
+</head>
+<body>
+  <div class="game-container">
+    <h1>4x4 Magic Matrix Game</h1>
+    <h2>IQ Game</h2>
+    <h2>Use your brain! Rows and columns must sum up to 34.Horizontally and vertically every line sum is 34
+    </h2>
+    <div class="grid" id="grid"></div>
+    <div class="controls">
+      <button class="btn" onclick="checkGame()">Check</button>
+      <button class="btn" onclick="resetGame()">Reset</button>
+    </div>
+    <div id="feedback" class="feedback" style="display: none;"></div>
+  </div>
+
+  <script>
+    const grid = document.getElementById("grid");
+    const feedback = document.getElementById("feedback");
+    const correctSum = 34; // Target sum for rows and columns (4x4 magic square)
+    let matrix = [];
+
+    // Initialize a 4x4 matrix with random numbers
+    function createMatrix() {
+      matrix = Array.from({ length: 4 }, () => Array(4).fill(0));
+    }
+
+    // Render the matrix grid in the UI
+    function renderMatrix() {
+      grid.innerHTML = "";
+      for (let i = 0; i < 4; i++) {
+        for (let j = 0; j < 4; j++) {
+          const cell = document.createElement("div");
+          cell.classList.add("cell");
+
+          const input = document.createElement("input");
+          input.type = "number";
+          input.value = matrix[i][j];
+          input.dataset.row = i;
+          input.dataset.col = j;
+          input.oninput = handleInput;
+
+          cell.appendChild(input);
+          grid.appendChild(cell);
+        }
+      }
+    }
+
+    // Handle input changes
+    function handleInput(event) {
+      const row = parseInt(event.target.dataset.row);
+      const col = parseInt(event.target.dataset.col);
+      matrix[row][col] = parseInt(event.target.value) || 0;
+    }
+
+    // Check if the user's input forms a magic matrix
+    function checkGame() {
+      let allCorrect = true;
+
+      // Check row sums
+      for (let i = 0; i < 4; i++) {
+        const rowSum = matrix[i].reduce((sum, val) => sum + val, 0);
+        if (rowSum !== correctSum) {
+          allCorrect = false;
+          break;
+        }
+      }
+
+      // Check column sums
+      for (let j = 0; j < 4; j++) {
+        let colSum = 0;
+        for (let i = 0; i < 4; i++) {
+          colSum += matrix[i][j];
+        }
+        if (colSum !== correctSum) {
+          allCorrect = false;
+          break;
+        }
+      }
+
+      feedback.style.display = "block";
+      if (allCorrect) {
+        feedback.textContent = "Congratulations! You've created a magic matrix.";
+        feedback.className = "feedback success";
+      } else {
+        feedback.textContent = "Incorrect. Make sure all rows and columns sum up to 34.";
+        feedback.className = "feedback error";
+      }
+    }
+
+    // Reset the game
+    function resetGame() {
+      createMatrix();
+      renderMatrix();
+      feedback.style.display = "none";
+    }
+
+    // Initialize the game
+    createMatrix();
+    renderMatrix();
+  </script>
+</body>
+</html>
